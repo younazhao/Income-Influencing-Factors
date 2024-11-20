@@ -5,7 +5,7 @@
 # Contact: youna.zhao@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: 
-  # - The `tidyverse` and `arrow`package must be installed and loaded
+  # - The `tidyverse` and `arrow` package must be installed and loaded
   # - 00-simulate_data.R must have been run
 
 #### Workspace setup ####
