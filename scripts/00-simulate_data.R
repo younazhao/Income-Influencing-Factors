@@ -6,7 +6,6 @@
 # Contact: youna.zhao@mail.utoronto.ca
 # License: MIT
 # Pre-requisites: The `tidyverse` package must be installed
-# Any other information needed? Make sure you are in the `starter_folder` rproj
 
 
 #### Workspace setup ####
