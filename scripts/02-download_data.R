@@ -1,26 +1,40 @@
 #### Preamble ####
-# Purpose: Downloads and saves the data from [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 11 February 2023 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Downloads and saves the data from Federal Reserve of US government 
+# Author: Wen Han Zhao
+# Date: 1 December 2024 
+# Contact: youna.zhao@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Pre-requisites: None
 
 
 #### Workspace setup ####
-library(opendatatoronto)
 library(tidyverse)
-# [...UPDATE THIS...]
+library(haven)
+library(arrow)
+
+#### Define a function to download the file ####
+scf_dta_import <-
+  function(this_url) {
+    this_tf <- tempfile()
+    
+    download.file(this_url , this_tf , mode = 'wb')
+    
+    this_tbl <- read_dta(this_tf)
+    
+    this_df <- data.frame(this_tbl)
+    
+    file.remove(this_tf)
+    
+    names(this_df) <- tolower(names(this_df))
+    
+    this_df
+  }
 
 #### Download data ####
-# [...ADD CODE HERE TO DOWNLOAD...]
-
+raw_scf_data <- scf_dta_import("https://www.federalreserve.gov/econres/files/scfp2022s.zip")
 
 
 #### Save data ####
-# [...UPDATE THIS...]
-# change the_raw_data to whatever name you assigned when you downloaded it.
-write_csv(the_raw_data, "inputs/data/raw_data.csv") 
+write_parquet(raw_scf_data, "data/01-raw_data/raw_data.parquet") 
 
          
