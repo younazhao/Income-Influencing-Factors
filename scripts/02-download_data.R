@@ -33,7 +33,6 @@ scf_dta_import <-
 #### Download data ####
 raw_scf_data <- scf_dta_import("https://www.federalreserve.gov/econres/files/scfp2022s.zip")
 
-
 #### Save data ####
 write_parquet(raw_scf_data, "data/01-raw_data/raw_data.parquet") 
 
