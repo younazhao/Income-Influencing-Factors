@@ -1,44 +1,51 @@
 #### Preamble ####
-# Purpose: Tests... [...UPDATE THIS...]
-# Author: Rohan Alexander [...UPDATE THIS...]
-# Date: 26 September 2024 [...UPDATE THIS...]
-# Contact: rohan.alexander@utoronto.ca [...UPDATE THIS...]
+# Purpose: Tests the analysis data
+# Author: Wen Han Zhao
+# Date: 1 December 2024
+# Contact: youna.zhao@mail.utoronto.ca
 # License: MIT
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
+# Pre-requisites: 
+  # - The `tidyverse` and `arrow` package must be installed and loaded
+  # - 03-clean_data.R must have been run
 
 
 #### Workspace setup ####
 library(tidyverse)
 library(testthat)
 
-data <- read_csv("data/02-analysis_data/analysis_data.csv")
+analysis_data <- read_parquet("data/02-analysis_data/analysis_data.parquet")
 
+# Test if the data was successfully loaded
+if (exists("analysis_data")) {
+  message("Test Passed: The dataset was successfully loaded.")
+} else {
+  stop("Test Failed: The dataset could not be loaded.")
+}
 
 #### Test data ####
-# Test that the dataset has 151 rows - there are 151 divisions in Australia
-test_that("dataset has 151 rows", {
-  expect_equal(nrow(analysis_data), 151)
+# Test that the dataset has 22778 rows
+test_that("dataset has 22778 rows", {
+  expect_equal(nrow(analysis_data), 22778)
 })
 
-# Test that the dataset has 3 columns
-test_that("dataset has 3 columns", {
-  expect_equal(ncol(analysis_data), 3)
+# Test that the dataset has 16 columns
+test_that("dataset has 16 columns", {
+  expect_equal(ncol(analysis_data), 16)
 })
 
-# Test that the 'division' column is character type
-test_that("'division' is character", {
-  expect_type(analysis_data$division, "character")
+# Test that the 'Sex' column is character type
+test_that("'sex' is character", {
+  expect_type(analysis_data$Sex, "character")
 })
 
-# Test that the 'party' column is character type
-test_that("'party' is character", {
-  expect_type(analysis_data$party, "character")
+# Test that the 'Education' column is character type
+test_that("'Education' is character", {
+  expect_type(analysis_data$Education, "character")
 })
 
-# Test that the 'state' column is character type
-test_that("'state' is character", {
-  expect_type(analysis_data$state, "character")
+# Test that the 'Marital Status' column is character type
+test_that("'Marital Status' is character", {
+  expect_type(analysis_data$Marital_status, "character")
 })
 
 # Test that there are no missing values in the dataset
@@ -46,9 +53,9 @@ test_that("no missing values in dataset", {
   expect_true(all(!is.na(analysis_data)))
 })
 
-# Test that 'division' contains unique values (no duplicates)
-test_that("'division' column contains unique values", {
-  expect_equal(length(unique(analysis_data$division)), 151)
+# Test that 'ID' contains unique values (no duplicates)
+test_that("'ID' column contains unique values", {
+  expect_equal(length(unique(analysis_data$ID)), 22778)
 })
 
 # Test that 'state' contains only valid Australian state or territory names
