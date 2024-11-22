@@ -12,6 +12,7 @@
 #### Workspace setup ####
 library(tidyverse)
 library(testthat)
+library(arrow)
 
 analysis_data <- read_parquet("data/02-analysis_data/analysis_data.parquet")
 
@@ -58,19 +59,34 @@ test_that("'ID' column contains unique values", {
   expect_equal(length(unique(analysis_data$ID)), 22778)
 })
 
-# Test that 'state' contains only valid Australian state or territory names
-valid_states <- c("New South Wales", "Victoria", "Queensland", "South Australia", "Western Australia", 
-                  "Tasmania", "Northern Territory", "Australian Capital Territory")
-test_that("'state' contains valid Australian state names", {
-  expect_true(all(analysis_data$state %in% valid_states))
+# Test that 'education' contains only valid Education level
+valid_educ <- c("Less than 1st grade", "1st, 2nd, 3rd, or 4th grade", "5th or 6th grade", "7th or 8th grade",
+                "9th grade", "10th grade", "11th grade", "12th grade, no diploma", 
+                "High school graduate - high school diploma or equivalent", "Some college but no degree",
+                "Associate degree in college - Occupation/vocation program", 
+                "Associate degree in college - academic program", "Bachelor's degree", "Master's degree",
+                "Professional school degree and Doctorate degree")
+test_that("'educ' contains valid Education level", {
+  expect_true(all(analysis_data$Education %in% valid_educ))
 })
 
-# Test that there are no empty strings in 'division', 'party', or 'state' columns
-test_that("no empty strings in 'division', 'party', or 'state' columns", {
-  expect_false(any(analysis_data$division == "" | analysis_data$party == "" | analysis_data$state == ""))
-})
+# Check if there are no empty strings in 'Education', 'Work_status', and 'Occupation' columns
+if (all(analysis_data$Education != "" & analysis_data$Work_status_category != "" & analysis_data$Occupation_Classification != "")) {
+  message("Test Passed: There are no empty strings in 'Education', 'Work_status', or 'Occupation'.")
+} else {
+  stop("Test Failed: There are empty strings in one or more columns.")
+}
 
-# Test that the 'party' column contains at least 2 unique values
-test_that("'party' column contains at least 2 unique values", {
-  expect_true(length(unique(analysis_data$party)) >= 2)
-})
+# Check if the 'Occupation' column has at least two unique values
+if (n_distinct(analysis_data$Occupation_Classification) >= 2) {
+  message("Test Passed: The 'Occupation' column contains at least two unique values.")
+} else {
+  stop("Test Failed: The 'Occupation' column contains less than two unique values.")
+}
+
+# Check the age is between 18 to 95 years old
+if (min(analysis_data$Age) >= 18 & max(analysis_data$Age) <= 95) {
+  message("Test Passed: The 'age' values are all between 18 and 95.")
+} else {
+  stop("Test Failed: The 'age' column contains at least one value <18 or >95.")
+}
