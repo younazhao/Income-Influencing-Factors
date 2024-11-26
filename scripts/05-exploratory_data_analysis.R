@@ -14,7 +14,7 @@ library(glmnet)
 library(ggplot2)
 
 #### Read data ####
-analysis_data <- read_parquet("data/analysis_data/analysis_data.parquet")
+analysis_data <- read_parquet("data/02-analysis_data/analysis_data.parquet")
 
 ### Model data ####
 
