@@ -38,7 +38,16 @@ second_model <- stan_glm(
   prior_aux = exponential(rate = 1, autoscale = TRUE),
   seed = 853
 )
+prediction <- predict(second_model, analysis_data)
 summary(second_model)
+
+ggplot(analysis_data, aes(x = log(income), y = prediction)) +
+  geom_point(color = 'blue') +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "red") +
+  labs(title = "Actual vs Predicted Values",
+       x = "Actual pct",
+       y = "Predicted pct") +
+  theme_minimal()
 
 # Save the model 1 in rds form
 saveRDS(
