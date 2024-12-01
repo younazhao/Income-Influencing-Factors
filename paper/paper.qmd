@@ -1,6 +1,6 @@
 ---
 title: "Factors influencing Total Income in the United States"
-subtitle: "Research and Statistical Analysis on Factors influencing Total Income in the United States of America"
+subtitle: "Analyzing Factors influencing Total Income in the United States of America from 2019 to 2022"
 author: 
   - Wen Han Zhao
 thanks: "Code and data are available at: [https://github.com/younazhao/Income-Influencing-Factors.git](https://github.com/younazhao/Income-Influencing-Factors.git)."
@@ -17,10 +17,13 @@ toc: true
 #| include: false
 #| warning: false
 #| message: false
-
+#install.packages("kableExtra")
 library(tidyverse)
 library(arrow)
 library(dplyr)
+library(tibble)
+library(knitr)
+library(kableExtra)
 ```
 
 ```{r}
@@ -48,7 +51,7 @@ To do this, total income was analyzed in Section 2 @sec-data. The prediction fro
 
 ## Overview {#sec-data-overview}
 
-The Survey of Consumer Finances (SCF), conducted in 2022 covering the period 1989 to 2022 by the Board of Governors of the Federal Reserve System of the United States [@scfdata], provides a comprehensive snapshot of household financial conditions across the nation. This dataset includes detailed information related to total income, capturing key predictors such as sex, education level, occupation category, salary income, and income from other sources. By offering rich, granular data, the SCF serves as an invaluable resource for analyzing the factors influencing income distribution and economic disparities within the United States.
+The Survey of Consumer Finances (SCF), conducted in 2022 covering the period 1989 to 2022 by the Board of Governors of the Federal Reserve System of the United States [@scf2022], provides a comprehensive snapshot of household financial conditions across the nation. This dataset includes detailed information related to total income, capturing key predictors such as sex, education level, occupation category, salary income, and income from other sources. By offering rich, granular data, the SCF serves as an invaluable resource for analyzing the factors influencing income distribution and economic disparities within the United States.
 
 ## Measurement {#sec-data-measurement}
 
@@ -56,18 +59,20 @@ The survey contained a panel element over 2 periods. Respondents to the 1983 sur
 
 ## Outcome variables{#sec-data-outcome}
 
-Histograph of the predicted variables, Total income.
+The histogram represents the distribution of our outcome variables total income among survey participants. From the graph, we can see that the graph shows slightly right skewed but mostly symmetric by following a bell shape curve. It shows a mean centered 11 to 12, indicating that most individuals in the survey have incomes within this range. The spread of the graph shows approximately from 8 to 16 of the log income and contains only a few extreme outliers at the tails. Overall, the distribution of log income, the outcome variable, follows a normal distribution. 
 
 ```{r}
 #| label: fig-hist
-#| fig-cap: Histogram of Total Income 
+#| fig-cap: Distribution of Total Income 
 #| echo: false
 data$log_income <- log(data$income)
 ggplot(data, aes(x = log_income)) +
   geom_histogram(binwidth = 0.5, fill = "blue", color = "black", alpha = 0.7) +
-  labs(title = "Histogram of Total Income", x = "Log Income", y = "Frequency") +
+  labs(x = "Log Income", y = "Frequency") +
   theme_minimal()
 ```
+
+Quantile-quantile plot is included to compare the log-transformed income data' distribution to a theoretical normal distribution. The data should expect to follow closely to the blue dashed line to indicate a normal distribution. From the graph, we can see that the middle of the plot lies closely to the line which indicate that the data follows a normal distribution. The right tail have various points deviate above the line, which suggest a heavier right tail. The deviation form the right tail is expected, since higher income are more random and harder to predict. 
 
 ```{r}
 #| label: fig-qq
@@ -81,8 +86,6 @@ ggplot(data = data, aes(sample = log_income)) +
   geom_qq_line(color = "blue", linetype = "dashed", size = 1) + # Adds a red dashed reference line
   theme_minimal() +
   labs(
-    title = "Q-Q Plot of Income",
-    subtitle = "Comparison of Income Distribution to a Theoretical Normal Distribution",
     x = "Theoretical Quantiles",
     y = "Sample Quantiles"
   )
@@ -94,43 +97,139 @@ ggplot(data = data, aes(sample = log_income)) +
 Predictors variables selected are Age, Sex, Marital Status, Education Level, Labour Force, Work Status, and Occupation category.
 
 ```{r}
-#| label: fig-pred
-#| fig-cap: Relationship of Predictors variables with Total Income
+#| label: fig-pred-age
+#| fig-cap: Log Income by Age
 #| echo: false
 #| warning: false
 #| message: false
-# Set up the plotting area
-par(mfrow = c(3, 3), mar = c(4, 4, 2, 2)) # 3 rows, 3 columns
 
-# Scatterplot: Log Income by Age with a regression line
-plot(data$Age, data$log_income, type = "p", main = "Log Income by Age", 
+plot(data$Age, data$log_income, type = "p", 
      xlab = "Age", ylab = "Log Income")
-abline(lm(log_income ~ Age, data = data), col = "red", lwd = 2) # Add regression line
-
-# List of variables for boxplots
-boxplot_vars <- list(
-  list(var = "married", title = "Marital Status"),
-  list(var = "num_sex", title = "Sex"),
-  list(var = "educ", title = "Education Level"),
-  list(var = "lf", title = "Labour Force"),
-  list(var = "num_work", title = "Work Status"),
-  list(var = "num_occu", title = "Occupation")
-)
-
-# Generate boxplots in a loop
-for (bp in boxplot_vars) {
-  boxplot(
-    log_income ~ get(bp$var, data), 
-    data = data,
-    main = paste("Log Income by", bp$title),
-    xlab = bp$title,
-    ylab = "Log Income",
-    col = "lightblue",
-    border = "darkblue"
-  )
-}
+abline(lm(log_income ~ Age, data = data), col = "red", lwd = 2)
 
 ```
+
+```{r}
+#| label: fig-pred-sex
+#| fig-cap: Log Income by Sex
+#| echo: false
+#| warning: false
+#| message: false
+
+ggplot(data, aes(x = Sex, y = log_income)) +
+  geom_boxplot(fill = "lightblue", color = "darkblue") +
+  xlab("Labour Force") +
+  ylab("Log Income") +
+  theme_minimal()
+
+```
+
+```{r}
+#| label: fig-pred-married
+#| fig-cap: Log Income by Marital Status
+#| echo: false
+#| warning: false
+#| message: false
+
+ggplot(data, aes(x = Marital_status, y = log_income)) +
+  geom_boxplot(fill = "lightblue", color = "darkblue") +
+  xlab("Labour Force") +
+  ylab("Log Income") +
+  theme_minimal()
+
+```
+
+```{r}
+#| label: fig-pred-educ
+#| fig-cap: Log Income by Educational Level
+#| echo: false
+#| warning: false
+#| message: false
+
+# Simplify the education levels
+data$Education_simplified <- case_when(
+  data$educ == -1 ~ "Less than 1st grade",
+  data$educ == 1 ~ "1st-4th grade",
+  data$educ == 2 ~ "5th-6th grade",
+  data$educ == 3 ~ "7th-8th grade",
+  data$educ == 4 ~ "9th grade",
+  data$educ == 5 ~ "10th grade",
+  data$educ == 6 ~ "11th grade",
+  data$educ == 7 ~ "12th grade, no diploma",
+  data$educ == 8 ~ "High school graduate",
+  data$educ == 9 ~ "Some college",
+  data$educ == 10 ~ "Associate degree (vocational)",
+  data$educ == 11 ~ "Associate degree (academic)",
+  data$educ == 12 ~ "Bachelor's degree",
+  data$educ == 13 ~ "Master's degree",
+  data$educ == 14 ~ "Professional/Doctorate"
+)
+# Reorder the 'Education_simplified' based on 'educ' numbers from small to large
+data$Education_simplified <- factor(data$Education_simplified, 
+                                    levels = c("Less than 1st grade", "1st-4th grade", "5th-6th grade", 
+                                               "7th-8th grade", "9th grade", "10th grade", "11th grade", 
+                                               "12th grade, no diploma", "High school graduate", "Some college", 
+                                               "Associate degree (vocational)", "Associate degree (academic)", 
+                                               "Bachelor's degree", "Master's degree", 
+                                               "Professional/Doctorate"))
+
+# Create the plot with simplified labels in correct order
+ggplot(data, aes(x = Education_simplified, y = log_income)) +
+  geom_boxplot(fill = "lightblue", color = "darkblue") +
+  xlab("Education Level") +
+  ylab("Log Income") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for better readability
+
+```
+
+```{r}
+#| label: fig-pred-lf
+#| fig-cap: Log Income by Labour Force
+#| echo: false
+#| warning: false
+#| message: false
+
+ggplot(data, aes(x = Labor_force, y = log_income)) +
+  geom_boxplot(fill = "lightblue", color = "darkblue") +
+  xlab("Labour Force") +
+  ylab("Log Income") +
+  theme_minimal()
+
+```
+
+```{r}
+#| label: fig-pred-worksta
+#| fig-cap: Log Income by Work Status
+#| echo: false
+#| warning: false
+#| message: false
+
+ggplot(data, aes(x = Work_status_category, y = log_income)) +
+  geom_boxplot(fill = "lightblue", color = "darkblue") +
+  xlab("Work Status") +
+  ylab("Log Income") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+
+```{r}
+#| label: fig-pred-occup
+#| fig-cap: Log Income by Occupation Category
+#| echo: false
+#| warning: false
+#| message: false
+
+ggplot(data, aes(x = Occupation_Classification, y = log_income)) +
+  geom_boxplot(fill = "lightblue", color = "darkblue") +
+  xlab("Occupation Category") +
+  ylab("Log Income") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+```
+\pagebreak
 
 # Model{#sec-model}
 
@@ -140,28 +239,86 @@ Here we briefly describe the Bayesian analysis model used to investigate... Back
 
 ## Model set-up{#sec-model-setup}
 
-Define $y_i$ as the number of seconds that the plane remained aloft. Then $\beta_i$ is the wing width and $\gamma_i$ is the wing length, both measured in millimeters.  
+Define $y_i$ as the Total Income for each individual participated in the survey in the United States at 2022. The predictors are categorical variables with different levels explained in @sec-data-. 
 
-\begin{align} 
-y_i|\mu_i, \sigma &\sim \mbox{Normal}(\mu_i, \sigma) \\
-\mu_i &= \alpha + \beta_i + \gamma_i\\
-\alpha &\sim \mbox{Normal}(0, 2.5) \\
-\beta &\sim \mbox{Normal}(0, 2.5) \\
-\gamma &\sim \mbox{Normal}(0, 2.5) \\
-\sigma &\sim \mbox{Exponential}(1)
-\end{align}
+\begin{align*}
+\log(y_i) &= \beta_0 
+    + \beta_1 \cdot \text{Sex} 
+    + \beta_2 \cdot \text{Education Level} 
+    + \beta_3 \cdot \text{Marital Status} \\
+&\quad + \beta_4 \cdot \text{Labor Force} 
+    + \beta_5 \cdot \text{Work Status Category} 
+    + \beta_6 \cdot \text{Occupation Classification} 
+    + \epsilon, \\
+\beta_0              &\sim \text{Normal}(10, 5), \\
+\beta_1, \beta_2, \ldots, \beta_6 &\sim \text{Normal}(0, 2.5), \\
+\epsilon             &\sim \text{Normal}(0, \delta^2), \\
+\delta               &\sim \text{Exponential}(1).
+\end{align*}
 
-We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`.
+## Linear Model {#sec-model-lm}
+
+We have started with the linear model for predicting Total Income based on the selected variables. The model set up is:
+
+\begin{align*}
+\hat{\text{income}} &= \beta_0 + \beta_1 \cdot \text{Sexmale} + \beta_2 \cdot \text{Education Level} + \beta_3 \cdot \text{Marital Status} + \beta_4 \cdot \text{Labor Force} \\
+&\quad + \beta_5 \cdot \text{num\_work} + \beta_6 \cdot \text{num\_occu}
+\end{align*} 
 
 
-### Model justification
+```{r}
+#| label: fig-lm
+#| fig-cap: Linear Model has limited predictive accuracy for Total Income
+#| echo: false
+#| warning: false
+#| message: false
+lm_model <- lm(formula = income ~ Sex + educ + married + lf + num_work + num_occu, data = data)
+prediction_1<- predict(lm_model, data)
 
-We expect a positive relationship between the size of the wings and time spent aloft. In particular...
+ggplot(data, aes(x = income, y = prediction_1)) +
+  geom_point(color = 'blue') +
+  geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "red") +
+  labs(title = "Actual vs Predicted Values",
+       x = "Actual pct",
+       y = "Predicted pct") +
+  theme_minimal()
 
-We can use maths by including latex between dollar signs, for instance $\theta$.
+```
 
 
-# Results
+```{r}
+#| label: tbl-lmresult
+#| fig-cap: Table for Linear Model Results
+#| echo: false
+#| warning: false
+#| message: false
+
+# Table for Linear Model Results
+table_description <- tibble(
+  Variable = c("(Intercept)", "Sexmale", "educ", "married", "lf", "num_work", "num_occu", 
+               "Residual Standard Error", "Multiple R-squared", "Adjusted R-squared", "F-statistic", "p-value"),
+  Estimate = c(-348940, 668026, 227466, -1103395, 116525, 1892834, -1273936, 
+               "1236000", "0.02223", "0.02198", "86.3", "< 2e-16"),
+  Std_Error = c(870243, 263287, 33274, 234718, 353617, 144769, 123257, 
+                "", "", "", "", ""),
+  t_value = c(-0.401, 2.537, 6.836, -4.701, 0.330, 13.075, -10.336, 
+              "", "", "", "", ""),
+  Pr_gt_Abs_t = c(0.6884, 0.0112, 8.35e-12, 2.60e-06, 0.7418, "< 2e-16", "< 2e-16", 
+                  "", "", "", "", ""),
+  Significance = c("", "*", "***", "***", "", "***", "***", "", "", "", "", "")
+)
+
+# Draw the table 
+kable(table_description, col.names = c("Variable", "Estimate", "Std. Error", "t-value", "Pr($\\gt \\mid t \\mid $)", "Significance")) |>
+  kable_styling(latex_options = c("striped", "hold_position"))
+```
+
+
+
+## Model justification{#sec-model-justification}
+We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`. The prior intercept have been set to $N(10,5)$ because the histogram @fig-hist indicates a mean near 10-12 with variation of 5. In addition, various predictors would have strong correlation with our outcome variable Total Income. By setting the prior intercept would capture well the additional knowledge compared to the default priors from `rstanarm` package. 
+
+# Results {#sec-results}
 
 Our results are summarized in @tbl-modelresults.
 
@@ -174,7 +331,7 @@ Our results are summarized in @tbl-modelresults.
 library(rstanarm)
 
 first_model <-readRDS(file = here::here("models/bayesian_model_2.rds"))
-model plot
+#model plot
 ```
 
 ```{r}
@@ -184,13 +341,13 @@ model plot
 #| tbl-cap: "Explanatory models of flight time based on wing width and wing length"
 #| warning: false
 
-modelsummary::modelsummary(list("First model" = first_model),statistic = "mad",fmt = 2)
+#modelsummary::modelsummary(list("First model" = first_model),statistic = "mad",fmt = 2)
 ```
 
 
 
 
-# Discussion
+# Discussion{#sec-discussion}
 
 ## First discussion point {#sec-first-point}
 
