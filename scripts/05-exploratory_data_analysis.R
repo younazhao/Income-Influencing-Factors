@@ -31,8 +31,6 @@ ggplot(analysis_data, aes(x = income, y = prediction_1)) +
   theme_minimal()
 
 # Log transformation Model
-
-analysis_data$log_income <- log(analysis_data$income)  # Add 1 to avoid log(0)
 lm_model2 <- lm(log_income ~ Sex + educ + married + lf + num_work + num_occu, data = analysis_data)
 prediction_2 <- predict(lm_model2, analysis_data)
 summary(lm_model2)
