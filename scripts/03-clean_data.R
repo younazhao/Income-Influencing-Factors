@@ -62,5 +62,8 @@ clean_data <- clean_data |>
     income > 0
   )
 
+# Add in log(income) for future use
+clean_data$log_income <- log(clean_data$income) 
+
 #### Save data ####
 write_parquet(clean_data, "data/02-analysis_data/analysis_data.parquet")
