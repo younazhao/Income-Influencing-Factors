@@ -262,8 +262,16 @@ We have started with the linear model for predicting Total Income based on the s
 
 \begin{align*}
 \hat{\text{income}} &= \beta_0 + \beta_1 \cdot \text{Sexmale} + \beta_2 \cdot \text{Education Level} + \beta_3 \cdot \text{Marital Status} + \beta_4 \cdot \text{Labor Force} \\
-&\quad + \beta_5 \cdot \text{num\_work} + \beta_6 \cdot \text{num\_occu}
+&\quad + \beta_5 \cdot \text{Work Status} + \beta_6 \cdot \text{Occupation Category}
 \end{align*} 
+
+```{r}
+#| echo: false
+#| warning: false
+#| message: false
+lm_model <- lm(formula = income ~ Sex + educ + married + lf + num_work + num_occu, data = data)
+prediction_1<- predict(lm_model, data)
+```
 
 
 ```{r}
@@ -272,8 +280,6 @@ We have started with the linear model for predicting Total Income based on the s
 #| echo: false
 #| warning: false
 #| message: false
-lm_model <- lm(formula = income ~ Sex + educ + married + lf + num_work + num_occu, data = data)
-prediction_1<- predict(lm_model, data)
 
 ggplot(data, aes(x = income, y = prediction_1)) +
   geom_point(color = 'blue') +
@@ -312,7 +318,12 @@ table_description <- tibble(
 kable(table_description, col.names = c("Variable", "Estimate", "Std. Error", "t-value", "Pr($\\gt \\mid t \\mid $)", "Significance")) |>
   kable_styling(latex_options = c("striped", "hold_position"))
 ```
+## Log Transformation of Linear Model {#sec-model-log}
 
+## Bayes Model {#sec-model-bayes}
+
+
+## Bayes Model on Log Transformation {#sec-model-logbayes}
 
 
 ## Model justification{#sec-model-justification}
