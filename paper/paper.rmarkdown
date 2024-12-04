@@ -36,6 +36,8 @@ data <- read_parquet(here::here("data/02-analysis_data/analysis_data.parquet"))
 ```
 
 
+
+
 # Introduction
 
 Income inequality is a central concern in economic research, reflecting disparities in access to opportunities, resources, and outcomes. In the United States, total income is influenced by a variety of factors, including personal, professional, and demographic characteristics. This paper explores the relationship between total income and predictors such as marital status, sex, educational level, labor force participation, and occupation. By employing statistical modeling techniques, we aim to uncover the extent to which these variables shape income levels and contribute to broader income disparities.
@@ -64,6 +66,8 @@ The survey contained a panel element over 2 periods. Respondents to the 1983 sur
 
 The histogram represents the distribution of our outcome variables total income among survey participants. From the graph, we can see that the graph shows slightly right skewed but mostly symmetric by following a bell shape curve. It shows a mean centered 11 to 12, indicating that most individuals in the survey have incomes within this range. The spread of the graph shows approximately from 8 to 16 of the log income and contains only a few extreme outliers at the tails. Overall, the distribution of log income, the outcome variable, follows a normal distribution. 
 
+
+
 ```{r}
 #| label: fig-hist
 #| fig-cap: Distribution of Total Income 
@@ -74,9 +78,13 @@ ggplot(data, aes(x = log_income)) +
   labs(x = "Log Income", y = "Frequency") +
   theme_minimal()
 ```
+
+
 \pagebreak
 
 Quantile-quantile plot is included to compare the log-transformed income data' distribution to a theoretical normal distribution. The data should expect to follow closely to the blue dashed line to indicate a normal distribution. From the graph, we can see that the middle of the plot lies closely to the line which indicate that the data follows a normal distribution. The right tail have various points deviate above the line, which suggest a heavier right tail. The deviation form the right tail is expected, since higher income are more random and harder to predict. 
+
+
 
 ```{r}
 #| label: fig-qq
@@ -95,6 +103,8 @@ ggplot(data = data, aes(sample = log_income)) +
   )
 
 ```
+
+
 \pagebreak
 
 ## Predictor variables{#sec-data-predictor}
@@ -102,6 +112,8 @@ ggplot(data = data, aes(sample = log_income)) +
 Predictors variables selected are Age, Sex, Marital Status, Education Level, Labour Force, Work Status, and Occupation category.
 
 In @fig-pred-age, the graph shows a scatter plot with Age on the x-axis and Log Income on the y-axis, with individual data points represented as black circles. A red regression line is overlaid, indicating the linear relationship between age and log-transformed income. The plot suggests a positive correlation between age and income, where income increases as age increases. However, the relationship appears relatively weak, as the data points are widely spread around the regression line, indicating substantial variability in income across different ages. Despite this, the general upward trend is clear, showing that older individuals tend to have higher log-transformed income. Therefore, we decided to not use this variable in our rating. 
+
+
 
 ```{r}
 #| label: fig-pred-age
@@ -115,9 +127,13 @@ plot(data$Age, data$log_income, type = "p",
 abline(lm(log_income ~ Age, data = data), col = "red", lwd = 2)
 
 ```
+
+
 \pagebreak
 
 In @fig-pred-sex, the graph is a boxplot comparing log-transformed income (Log Income) between females and males in the labour force. The y-axis represents the log of income, while the x-axis distinguishes between females and males. The boxplots show that both groups have a similar range of income, with the male group exhibiting a wider spread and higher income values, as indicated by the larger box and more significant presence of outliers. The female group’s boxplot is more concentrated around the lower range of log income, with fewer outliers, suggesting that females generally earn less in comparison to males in this dataset. The median for females is lower, and the distribution is less variable than for males.
+
+
 
 ```{r}
 #| label: fig-pred-sex
@@ -133,8 +149,12 @@ ggplot(data, aes(x = Sex, y = log_income)) +
   theme_minimal()
 
 ```
+
+
 \pagebreak
 In @fig-pred-married, the boxplot compares log-transformed income (Log Income) between married and not married individuals in the labour force. The y-axis represents the log of income, while the x-axis distinguishes between the two marital status groups. The boxplot for married individuals shows a higher median and wider distribution of income, with more outliers present, indicating a broader range of income levels and higher earnings overall. In contrast, the not married group has a lower median income, and the distribution is more tightly clustered around lower values, suggesting that individuals who are not married tend to have lower log income compared to their married counterparts.
+
+
 
 ```{r}
 #| label: fig-pred-married
@@ -150,8 +170,12 @@ ggplot(data, aes(x = Marital_status, y = log_income)) +
   theme_minimal()
 
 ```
+
+
 \pagebreak
 In @fig-pred-educ, the boxplot compares log-transformed income (Log Income) across different education levels. The y-axis represents log income, while the x-axis shows various levels of education, ranging from less than 1st grade to professional/doctoral degrees. The plot reveals a clear positive trend: as education level increases, the median log income tends to rise, with individuals holding a Master's degree or Professional/Doctorate showing the highest median incomes. The spread of income also increases with higher education levels, particularly for individuals with Bachelor's degrees and beyond, where there are more outliers. This indicates that individuals with higher education levels generally have greater income, but the income distribution becomes more varied at the higher education levels.
+
+
 
 ```{r}
 #| label: fig-pred-educ
@@ -196,8 +220,12 @@ ggplot(data, aes(x = Education_simplified, y = log_income)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for better readability
 
 ```
+
+
 \pagebreak
 In @fig-pred-lf, the boxplot compares log-transformed income (Log Income) between individuals who are working and those who are not working at all in the labour force. The y-axis represents log income, while the x-axis differentiates between the two groups. The plot shows that individuals working in some way generally have higher log incomes, with a wider spread and more outliers, particularly at the upper end. In contrast, those not working at all tend to have lower log incomes, with a narrower distribution and fewer outliers. The median for the "working in some way" group is higher, indicating that employment is associated with higher income. The presence of more outliers in the working group suggests greater income variability among those employed.
+
+
 
 ```{r}
 #| label: fig-pred-lf
@@ -213,8 +241,12 @@ ggplot(data, aes(x = Labor_force, y = log_income)) +
   theme_minimal()
 
 ```
+
+
 \pagebreak
 In @fig-pred-worksta, the boxplot compares log-transformed income (Log Income) across four different work statuses: Not working, Retired/Disabled, Self-employed/Partnership, and Work for someone else. The y-axis represents log income, while the x-axis differentiates between the work status categories. Individuals who work for someone else tend to have the highest median log income, with a wider spread and more outliers, indicating greater income variability. Self-employed/partnership individuals also show higher median incomes but with a slightly smaller spread. Those who are retired/disabled have a narrower distribution, with a lower median income, and the not working group has the lowest median income, with a similar narrow distribution. The plot clearly demonstrates that employment, particularly in self-employment or working for someone else, is associated with higher log income compared to being retired, disabled, or not working.
+
+
 
 ```{r}
 #| label: fig-pred-worksta
@@ -231,8 +263,12 @@ ggplot(data, aes(x = Work_status_category, y = log_income)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
+
+
 \pagebreak
 In @fig-pred-occup, the boxplot compares log-transformed income (Log Income) across four occupation categories: Managerial/Professional, Not working, Other (production workers/farmers), and Technical/Sales/Services. The y-axis represents log income, and the x-axis differentiates between the occupation groups. Individuals in the Managerial/Professional category have the highest median income, with a wider spread and many outliers, indicating significant income variability. The Technical/Sales/Services category also shows a higher median income, though the distribution is somewhat narrower. The Other (production workers/farmers) group has a lower median income, with a spread similar to that of the Not working category, which has the lowest median income. This suggests that higher-paying jobs are generally found in managerial/professional and technical/sales/services occupations, while individuals in non-working or lower-skill jobs tend to have lower income.
+
+
 
 ```{r}
 #| label: fig-pred-occup
@@ -249,6 +285,8 @@ ggplot(data, aes(x = Occupation_Classification, y = log_income)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ```
+
+
 \pagebreak
 
 # Model{#sec-model}
@@ -285,6 +323,8 @@ We have started with the linear model for predicting Total Income based on the s
 &\quad + \beta_5 \cdot \text{Work Status} + \beta_6 \cdot \text{Occupation Category}
 \end{align*} 
 
+
+
 ```{r}
 #| echo: false
 #| warning: false
@@ -293,7 +333,11 @@ lm_model <- lm(formula = income ~ Sex + educ + married + lf + num_work + num_occ
 prediction_1<- predict(lm_model, data)
 ```
 
+
+
 From @fig-lm, we can see that our linear model do not show a good accuracy for the Total Income variable. The graph shows presence of various outliers which causes the graph to be focused near the start of the range. From the red dotted line, we can see that it has show a slight predictive power but still weak in this graph. 
+
+
 
 ```{r}
 #| label: fig-lm
@@ -311,7 +355,6 @@ ggplot(data, aes(x = income, y = prediction_1)) +
   theme_minimal()
 
 ```
-
 
 ```{r}
 #| label: tbl-lmresult
@@ -340,8 +383,12 @@ kable(table_description, col.names = c("Variable", "Estimate", "Std. Error", "t-
   kable_styling(latex_options = c("striped", "hold_position"))
 ```
 
+
+
 \pagebreak
 ## Log Transformation of Linear Model {#sec-model-log}
+
+
 ```{r}
 #| echo: false
 #| warning: false
@@ -350,8 +397,6 @@ lm_model2 <- lm(log_income ~ Sex + educ + married + lf + num_work + num_occu, da
 prediction_2 <- predict(lm_model2, data)
 
 ```
-
-
 
 ```{r}
 #| label: fig-loglm
@@ -397,9 +442,13 @@ kable(table_description, col.names = c("Variable", "Estimate", "Std. Error", "t-
   kable_styling(latex_options = c("striped", "hold_position"))
 
 ```
+
+
 \pagebreak
 
 ## Bayes Model {#sec-model-bayes}
+
+
 
 ```{r}
 #| echo: false
@@ -434,6 +483,7 @@ ggplot(data, aes(x = income, y = prediction_3)) +
        y = "Predicted pct") +
   theme_minimal()
 ```
+
 ```{r}
 #| label: tbl-bayes
 #| fig-cap: Table for Log Bayes Model Results
@@ -464,8 +514,12 @@ kable(table_description, col.names = c("Variable", "Mean", "SD", "10%", "50%", "
   kable_styling(latex_options = c("striped", "hold_position"))
 ```
 
+
+
 \pagebreak
 ## Bayes Model on Log Transformation {#sec-model-logbayes}
+
+
 
 ```{r}
 #| echo: false
@@ -527,6 +581,8 @@ kable(table_description, col.names = c("Variable", "Mean", "SD", "10%", "50%", "
 
 ```
 
+
+
 ## Model justification{#sec-model-justification}
 
 We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use the default priors from `rstanarm`. The prior intercept have been set to $N(10,5)$ because the histogram @fig-hist indicates a mean near 10-12 with variation of 5. In addition, various predictors would have strong correlation with our outcome variable Total Income. By setting the prior intercept would capture well the additional knowledge compared to the default priors from `rstanarm` package. In overall, the results from the Bayes log model show a comprehensive analysis of the relationship between various predictors and the log-transformed income. The estimates for the coefficients, such as Sexmale (0.4), educ (0.2), and num_work (0.5), indicate that being male, having more education, and working more hours are all associated with higher log income. Married individuals, however, have a negative coefficient (-1.0), suggesting that being married is associated with a decrease in log income, although this relationship is modest. The model also shows a sigma value of 1.3, indicating the residual standard error, which measures the spread of the log income data around the model’s predictions. The mean PPD (11.8) suggests that the posterior predictive distribution for income is centered around this value, reinforcing the model's fit. The MCMC diagnostics (Rhat values of 1.0 for all parameters) confirm that the model has converged, with effective sample sizes (n_eff) indicating adequate sampling efficiency for each parameter. Lastly, the model appears to be well-specified, with clear relationships between income and the included variables, and good convergence as evidenced by the diagnostics.
@@ -536,6 +592,8 @@ We run the model in R [@citeR] using the `rstanarm` package of @rstanarm. We use
 Our results are summarized in @tbl-logbayes.
 
 The graph displays the posterior estimates of the model parameters in a plot, with each circle representing the point estimate of a parameter and its corresponding value plotted along the x-axis. Most of the estimates are clustered near zero, indicating relatively small effects on the outcome variable, except for sigma, which is the largest estimate, located at the far right of the graph. This suggests that the model accounts for a substantial amount of variability in the dependent variable. The plot visually emphasizes the magnitude of the coefficients, with some parameters having minimal effect, while sigma represents the level of uncertainty in the model’s predictions. The results from the graph suggest that the majority of the model's predictors, have relatively small point estimates, but these estimates are still substantial enough to be considered meaningful in the context of the model.
+
+
 ```{r}
 #| echo: false
 #| eval: true
@@ -546,9 +604,13 @@ bayes_model <-readRDS(file = here::here("models/bayesian_model_2.rds"))
 plot(bayes_model)
 ```
 
+
+
 \pagebreak
 
 The model summary table shows key results from the regression analysis, with estimates for both the coefficients and model diagnostics. The Intercept is 11.36, indicating a significant baseline value for the outcome variable when all predictors are zero, with a small standard error (0.09), suggesting high precision. Sexmale has a coefficient of 0.42, statistically significant with a small standard error of 0.03, meaning that being male is associated with an increase in the outcome variable. The Education Level estimate (0.18) suggests a positive but modest effect on the outcome, with the very small standard error (0.00), indicating a highly precise estimate. Marital Status and Labor Force have negative coefficients of -1.01 and -0.12, respectively, suggesting that being married or part of the labor force is associated with a decrease in the outcome. Occupation Category also shows a negative relationship (-0.53), indicating a significant reduction in the outcome with different occupation categories. The model’s R² of 0.438 indicates that about 44% of the variance in the dependent variable is explained by the model, while the Adjusted R² confirms this relationship is statistically valid, considering the number of predictors. Log.Lik. (-37811.782) and ELPD (-37819.9) are used for model comparison, with lower values indicating better model fit. The RMSE of 1.27 suggests the model predicts the outcome with reasonable accuracy, with a small average error in predictions.
+
+
 
 ```{r}
 #| echo: false
@@ -572,6 +634,8 @@ model_summary <- data.frame(
 kable(model_summary, caption = "Model Summary Table")
 
 ```
+
+
 
 
 \pagebreak
@@ -608,6 +672,8 @@ In @fig-ppcheckandposteriorvsprior-1 we implement a posterior predictive check. 
 
 In @fig-ppcheckandposteriorvsprior-2 we compare the posterior with the prior. The graph presents posterior and prior distributions for the parameters of a Bayesian model. On the left, the posterior distributions show the estimated values of each parameter based on the data and the model. The vertical lines represent the credible intervals for each parameter, and the dots represent the point estimates. On the right, the prior distributions are shown for the same parameters, illustrating what the model assumed about each parameter before observing the data. The prior distributions are much wider and more diffuse compared to the posterior distributions, indicating less certainty about the parameters before incorporating data. The priors for most parameters have a wide spread, with the prior for Intercept being particularly broad, suggesting high uncertainty. The difference between the prior and posterior for each parameter shows the influence of the data in updating the beliefs about these parameters. This plot provides a useful comparison to see how the data has informed the model's parameter estimates.
 
+
+
 ```{r}
 #| eval: true
 #| echo: false
@@ -629,11 +695,15 @@ posterior_vs_prior(bayes_model) +
   coord_flip()
 ```
 
+
+
 ## Diagnostics{#sec-modeldetails-diagnostics}
 
 @fig-tracerhatplot-1 is a trace plot. The graph displays trace plots for multiple parameters in a Bayesian model, generated through Markov Chain Monte Carlo (MCMC) sampling. The plot contains four separate MCMC chains, each representing an independent sequence of parameter samples, with the x-axis indicating the number of iterations (from 1 to 1000) and the y-axis showing the values of the parameter estimates at each iteration.The trace plots for each parameter indicate good convergence across all chains, with the chains mixing well and stabilizing at similar values over time. The lack of systematic drift and the stable fluctuations around central values suggest that the model has reached stationarity, and the sampling process is not biased by the starting values. This indicates that the MCMC chains are successfully exploring the posterior distribution, and the parameter estimates are reliable. Overall, the graph suggests that the model's parameters are well-estimated, with the chains converging to a consistent distribution, making the results trustworthy for our models. 
 
 @fig-tracerhatplot-2 is a Rhat plot. This plot represents the Gelman-Rubin diagnostic (denoted as R̂), which is used to assess convergence in a Bayesian analysis. The x-axis shows the values of R̂, which indicates whether the multiple MCMC chains have converged to the same distribution. Most of the points lie very close to 1.00, indicating that these parameters have likely converged, as the chains are sampling from the same posterior distribution. A few points may be slightly above 1.00, but all are still well below 1.1, suggesting that the model is close to convergence. The plot shows R̂ ≤ 1.05 for several parameters, which is generally considered acceptable for convergence, while any parameters with R̂ above 1.1 would indicate poor convergence, but this is not visible in the plot. The small variation in R̂ values suggests the model is performing well and the chains have likely mixed adequately.
+
+
 
 ```{r}
 #| echo: false
@@ -649,7 +719,10 @@ plot(bayes_model, "trace")
 
 plot(bayes_model, "rhat")
 ```
+
+
 \newpage
 # References {#sec-references}
+
 
 
