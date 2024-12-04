@@ -6,7 +6,7 @@ author:
 thanks: "Code and data are available at: [https://github.com/younazhao/Income-Influencing-Factors.git](https://github.com/younazhao/Income-Influencing-Factors.git)."
 date: 1 December 2024
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "This paper develops a Bayes generalized linear model to predict the Total Income of United States of America through a survey conducte from 2019 to 2022. By analyzing factors such as Age, Sex, Marital Status, Education Level, Labour Force, Work Status and Occupation Category. By integrating these factors, we are able to see several trends and differences in each of those variables in order to best predict the Total Income in each individuals. Our results show that Male workers with higher education level at a managerial position will have higher Income. This model offers a comprehensive tool for understanding the different categories in each individual group and improving the accuracy of Total Income predictions."
 format: pdf
 number-sections: true
 bibliography: references.bib
@@ -580,7 +580,7 @@ kable(model_summary, caption = "Model Summary Table")
 
 ## Summary of Findings {#sec-discussion-summary}
 
-In this paper, 
+In this paper, we have developed a Bayes linear model predicting the Total Income of United States individuals. The model has provided a accurate prediction in terms of middle income group. However, it is still hard to predict high and low income group. With our analysis, we have found that 
 
 ## Second discussion point
 
