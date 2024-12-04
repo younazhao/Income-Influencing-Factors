@@ -14,12 +14,12 @@ library(arrow)
 library(dplyr)
 
 #### Read data ####
-analysis_data <- read_parquet("data/02-analysis_data/analysis_data.parquet")
+data <- read_parquet("data/02-analysis_data/analysis_data.parquet")
 
 #### Model data ####
 first_model <- stan_glm(
   formula = income ~ Sex + educ + married + lf + num_work + num_occu,
-  data = analysis_data,
+  data = data,
   family = gaussian(),
   prior = normal(location = 0, scale = 2.5, autoscale = TRUE),
   prior_intercept = normal(location = 500, scale = 100, autoscale = TRUE),
@@ -31,17 +31,17 @@ summary(first_model)
 # Second model
 second_model <- stan_glm(
   formula = log(income) ~ Sex + educ + married + lf + num_work + num_occu,
-  data = analysis_data,
+  data = data,
   family = gaussian(),
   prior = normal(location = 0, scale = 2.5, autoscale = TRUE),
   prior_intercept = normal(location = 10, scale = 5, autoscale = TRUE),
   prior_aux = exponential(rate = 1, autoscale = TRUE),
   seed = 853
 )
-prediction <- predict(second_model, analysis_data)
+prediction <- predict(second_model, data)
 summary(second_model)
 
-ggplot(analysis_data, aes(x = log(income), y = prediction)) +
+ggplot(data, aes(x = log(income), y = prediction)) +
   geom_point(color = 'blue') +
   geom_abline(intercept = 0, slope = 1, linetype = "dashed", color = "red") +
   labs(title = "Actual vs Predicted Values",
@@ -62,9 +62,9 @@ saveRDS(
 )
 
 # Create training and testing dataset
-train_indice <- sample(seq_len(nrow(analysis_data)), size = 0.7 * nrow(analysis_data))
-train_dataset <- analysis_data[train_indice, ]
-test_dataset <- analysis_data[-train_indice, ]
+train_indice <- sample(seq_len(nrow(data)), size = 0.7 * nrow(data))
+train_dataset <- data[train_indice, ]
+test_dataset <- data[-train_indice, ]
 
 # Save the training and testing dataset
 write_parquet(train_dataset, "./data/02-analysis_data/train_dataset.parquet")
